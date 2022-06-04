@@ -62,7 +62,7 @@ class CustomConfig(Config):
     Derives from the base Config class and overrides some values.
     """
     # Give the configuration a recognizable name
-    NAME = "bottle"
+    NAME = "cigarette"
 
     # We use a GPU with 12GB memory, which can fit two images.
     # Adjust down if you use a smaller GPU.
@@ -90,10 +90,10 @@ class CustomDataset(utils.Dataset):
         subset: Subset to load: train or val
         """
         # Add classes. We have only one class to add.
-        self.add_class("bottle", 1, "bottle")
+        self.add_class("cigarette", 1, "cigarette")
 
         # Train or validation dataset?
-        assert subset in ["train", "val"]
+        assert subset in ["train", "eval"]
         dataset_dir = os.path.join(dataset_dir, subset)
 
         # Load annotations
@@ -127,7 +127,7 @@ class CustomDataset(utils.Dataset):
         
         # Add image
         for image in data["images"]:
-            image_path = image['file_name']
+            image_path = os.path.join(dataset_dir, image['file_name'])
             width, height = image['width'], image['height']
             image_id=image['id']
             # Get the x, y coordinaets of points of the polygons that make up
@@ -142,7 +142,7 @@ class CustomDataset(utils.Dataset):
             
 
             self.add_image(
-                "bottle",  ## for a single class just add the name here
+                "cigarette",  ## for a single class just add the name here
                 image_id=image_id,  # unique image id
                 path=image_path,
                 width=width, height=height,
@@ -157,7 +157,7 @@ class CustomDataset(utils.Dataset):
         """
         # If not a beagle dataset image, delegate to parent class.
         image_info = self.image_info[image_id]
-        if image_info["source"] != "bottle":
+        if image_info["source"] != "cigarette":
             return super(self.__class__, self).load_mask(image_id)
 
         # Convert polygons to a bitmap mask of shape
@@ -184,7 +184,7 @@ class CustomDataset(utils.Dataset):
     def image_reference(self, image_id):
         """Return the path of the image."""
         info = self.image_info[image_id]
-        if info["source"] == "bottle":
+        if info["source"] == "cigarette":
             return info["path"]
         else:
             super(self.__class__, self).image_reference(image_id)
@@ -196,10 +196,10 @@ def train(model):
     dataset_train = CustomDataset()
     dataset_train.load_custom(args.dataset, "train")
     dataset_train.prepare()
-
+    
     # Validation dataset
     dataset_val = CustomDataset()
-    dataset_val.load_custom(args.dataset, "val")
+    dataset_val.load_custom(args.dataset, "eval")
     dataset_val.prepare()
 
     # *** This training schedule is an example. Update to your needs ***

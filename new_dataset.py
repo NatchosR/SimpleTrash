@@ -15,11 +15,11 @@ from shutil import copy
 ######################################
 
 category="Cigarette"
-TACO_dataset_dir = "./TACO/data/"
-TACO_annotations = "./TACO/data/annotations.json"
+TACO_dataset_dir = "../Deep-Recycling/TACO/data/"
+TACO_annotations = "../Deep-Recycling/TACO/data/annotations.json"
 split_ratio=0.8                         # percentage for the training
-dir_dst_train="./cig_data/train/"
-dir_dst_eval="./cig_data/eval/"
+dir_dst_train="./SimpleTrash/data/train/"
+dir_dst_eval="./SimpleTrash/data/eval/"
 
 # First we access the category id 
 annotations=open(TACO_annotations)
@@ -115,7 +115,7 @@ for dir in ['train', 'eval']:
     annotations_coco=[]
     for annotations in data["annotations"]:
         image_dict={}
-        if annotations["image_id"] in list_image_id:   
+        if annotations["image_id"] in list_image_id and annotations["category_id"] in cat_id:   
             image_dict["id"]=annotations["id"]
             image_dict["image_id"]=annotations["image_id"]
             image_dict["category_id"]=0     #only 1 categroy
